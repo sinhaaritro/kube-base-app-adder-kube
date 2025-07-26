@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # A unique name for your deployment object in Kubernetes
+  name: adder-app-deployment
+spec:
+  # Run one copy of your application
+  replicas: 1
+  selector:
+    matchLabels:
+      # This label is used to link this Deployment to its Pods
+      app: adder-app
+  template:
+    metadata:
+      labels:
+        # This label is applied to the Pods, allowing the Service to find them
+        app: adder-app
+    spec:
+      # This is critical for pulling from a private GHCR repository.
+      # It tells the deployment to use the secret we created earlier.
+      imagePullSecrets:
+      - name: ghcr-creds
+      containers:
+      - name: adder-container
+        # The full image path from your container registry.
+        # Ensure you have a 'v1.0.0' tag, or use another valid tag.
+        image: ghcr.io/sinhaaritro/kube-base-app-adder-container:v1.0.0
+        # This policy ensures Kubernetes always checks for a new version of the image
+        imagePullPolicy: Always
+        ports:
+        # The port your Deno application listens on inside the container
+        - containerPort: 8000
+        # This section defines the environment variables to pass to the container
+        env:
+        - name: "WELCOME_MESSAGE"
+          value: "Adding is fun! Running in K8s!"

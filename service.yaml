@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # A unique name for your service object
+  name: adder-app-service
+spec:
+  # 'NodePort' exposes the service on a static port on each node's IP.
+  type: NodePort
+  selector:
+    # This selector must match the 'app' label on your Pods to find them.
+    app: adder-app
+  ports:
+    - protocol: TCP
+      # The port the service itself listens on internally.
+      port: 80
+      # The port on your container that traffic should be forwarded to.
+      targetPort: 8000
+      # The static port opened on your VM's IP address.
+      # I've chosen a new port, 30085, to avoid conflicts with other apps.
+      nodePort: 30085
